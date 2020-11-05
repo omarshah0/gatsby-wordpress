@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Link, graphql } from 'gatsby'
+import Img from 'gatsby-image'
 
 export default class IndexPage extends React.Component {
   render() {
@@ -31,11 +32,28 @@ export default class IndexPage extends React.Component {
                 </small>
               </p>
               <div>
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: post.excerpt.replace(/<p class="link-more.*/, ''),
-                  }}
-                />
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  {post.featured_media && (
+                    <div
+                      style={{
+                        width: '200px',
+                      }}
+                    >
+                      <Link to={post.slug}>
+                        <Img
+                          fluid={
+                            post.featured_media.localFile.childImageSharp.fluid
+                          }
+                        />
+                      </Link>
+                    </div>
+                  )}
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: post.excerpt.replace(/<p class="link-more.*/, ''),
+                    }}
+                  />
+                </div>
                 <Link className="button is-small" to={post.slug}>
                   Keep Reading →
                 </Link>
@@ -63,6 +81,15 @@ export const pageQuery = graphql`
       slug
       avatar_urls {
         wordpress_48
+      }
+    }
+    featured_media {
+      localFile {
+        childImageSharp {
+          fluid {
+            ...GatsbyImageSharpFluid
+          }
+        }
       }
     }
     date(formatString: "MMMM DD, YYYY")
